@@ -387,7 +387,7 @@ export async function getLemonSqueezyPrices(revalidate: number = 300) {
 
       // Get products to map store IDs
       const productsResult = await listProducts();
-      let storeProducts: Set<number> = new Set();
+      const storeProducts: Set<number> = new Set();
 
       if (productsResult.data && !productsResult.error) {
         const products = Array.isArray(productsResult.data)
