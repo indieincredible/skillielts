@@ -1,0 +1,109 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create env file
+        run: |
+          cat <<'EOF' > .env.local
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL=${{ secrets.RESEND_FROM_EMAIL }}
+          BASE_URL=${{ secrets.BASE_URL }}
+          LEMONSQUEEZY_API_KEY=${{ secrets.LEMONSQUEEZY_API_KEY }}
+          LEMONSQUEEZY_STORE_ID=${{ secrets.LEMONSQUEEZY_STORE_ID }}
+          LEMONSQUEEZY_WEBHOOK_SECRET=${{ secrets.LEMONSQUEEZY_WEBHOOK_SECRET }}
+          AXIOM_TOKEN=${{ secrets.AXIOM_TOKEN }}
+          AXIOM_DATASET=${{ secrets.AXIOM_DATASET }}
+          NEXT_PUBLIC_SENTRY_DSN=${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          EOF
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Build
+        run: pnpm run build
+
+  deploy:
+    name: Deploy to Vercel
+    needs: lint-and-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create env file
+        run: |
+          cat <<'EOF' > .env.local
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL=${{ secrets.RESEND_FROM_EMAIL }}
+          BASE_URL=${{ secrets.BASE_URL }}
+          LEMONSQUEEZY_API_KEY=${{ secrets.LEMONSQUEEZY_API_KEY }}
+          LEMONSQUEEZY_STORE_ID=${{ secrets.LEMONSQUEEZY_STORE_ID }}
+          LEMONSQUEEZY_WEBHOOK_SECRET=${{ secrets.LEMONSQUEEZY_WEBHOOK_SECRET }}
+          AXIOM_TOKEN=${{ secrets.AXIOM_TOKEN }}
+          AXIOM_DATASET=${{ secrets.AXIOM_DATASET }}
+          NEXT_PUBLIC_SENTRY_DSN=${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          EOF
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Deploy
+        run: pnpm dlx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+
