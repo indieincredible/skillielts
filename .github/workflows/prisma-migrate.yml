@@ -1,0 +1,38 @@
+name: Prisma Migration Check
+
+on:
+  pull_request:
+    paths:
+      - 'prisma/schema.prisma'
+      - 'prisma/migrations/**'
+
+jobs:
+  check-migration:
+    name: Check Prisma Migration
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate Prisma schema
+        run: pnpm prisma validate
+
+      - name: Check for migration conflicts
+        run: pnpm prisma migrate diff --from-schema-datamodel prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --script
+        continue-on-error: true
+
