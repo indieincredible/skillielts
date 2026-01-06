@@ -11,27 +11,27 @@ interface Step {
 }
 
 const hiringSteps: Step[] = [
-  { id: 1, content: 'Input requirements or import JD (job description) file' },
+  { id: 1, content: 'Choose IELTS Writing Task 1 or Task 2' },
   {
     id: 2,
     content:
-      "SkillIelts uses AI to generate multiple-choice questions based on job description or company's tech stack",
+      'Select topic from 500+ question bank (charts, essays, diagrams)',
   },
-  { id: 3, content: 'Adjust question difficulty' },
-  { id: 4, content: 'Quick skills assessment before in-depth interviews' },
-  { id: 5, content: 'Compare and evaluate multiple candidates' },
+  { id: 3, content: 'Write your essay directly on the platform' },
+  { id: 4, content: 'AI analyzes and scores based on IELTS criteria' },
+  { id: 5, content: 'Review detailed feedback and band score breakdown' },
 ];
 
 const candidateSteps: Step[] = [
-  { id: 1, content: 'Take the test' },
-  { id: 2, content: 'AI evaluates your current skill level' },
+  { id: 1, content: 'Choose your writing task (Task 1 or Task 2)' },
+  { id: 2, content: 'Write your essay with real-time word count' },
   {
     id: 3,
     content:
-      'Skill gaps analysis: Get personalized learning path suggestions based on test results',
+      'AI evaluates: Task Response, Coherence, Lexical Resource, Grammar',
   },
-  { id: 4, content: 'Set job goals and weekly learning time availability' },
-  { id: 5, content: 'AI creates plan and roadmap to improve skill gaps' },
+  { id: 4, content: 'Get personalized feedback and improvement suggestions' },
+  { id: 5, content: 'Track progress and practice to achieve Band 7.0+' },
 ];
 
 export function Terminal() {
@@ -72,7 +72,7 @@ export function Terminal() {
               className="flex-1 data-[state=active]:bg-gray-700 rounded-md py-2 flex items-center justify-center gap-2 text-white"
             >
               <Building2 className="w-4 h-4" />
-              Hiring Company
+              Quick Start
             </TabsTrigger>
           )}
           <TabsTrigger
@@ -80,7 +80,7 @@ export function Terminal() {
             className="flex-1 data-[state=active]:bg-gray-700 rounded-md py-2 flex items-center justify-center gap-2 text-white"
           >
             <GraduationCap className="w-4 h-4" />
-            Candidate
+            Learning Path
           </TabsTrigger>
         </TabsList>
 
@@ -104,7 +104,7 @@ export function Terminal() {
               variants={item}
             >
               <span>✓</span>
-              <span>Ready to start hiring!</span>
+              <span>Ready to improve your IELTS Writing!</span>
             </motion.div>
           </motion.div>
         </TabsContent>
@@ -129,7 +129,7 @@ export function Terminal() {
               variants={item}
             >
               <span>✓</span>
-              <span>Start your learning journey!</span>
+              <span>Start your journey to Band 7.0+!</span>
             </motion.div>
           </motion.div>
         </TabsContent>
@@ -137,9 +137,4 @@ export function Terminal() {
     </div>
   );
 }
-
-
-
-
-
 
